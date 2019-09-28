@@ -5,7 +5,7 @@ Bruce's Own scriptable mLite Editor
 
 written in B4J. MIT License.
 
-Requires Java 8.
+Requires Java 8 and [JRLIni](https://www.b4x.com/b4j/help/jrlini.html) 
 
 Uses a dynamic menu. Path to menu folder stored in BOLE.INI. JavaScript files are interpreted by Nashorn. 
 

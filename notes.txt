@@ -1,0 +1,32 @@
+Tue 09/12/2014 14:26:41.53:
+	read ini file for rootOfMenus
+Tue 09/12/2014 14:26:51.56:
+	read files and folders from rootOfMenus
+Tue 09/12/2014 14:27:12.78:
+	File menu to be found in File folder
+Tue 09/12/2014 14:27:44.32:
+	find way of enforcing order of items lest Edit menu be found before File menu
+Fri 12/12/2014 11:39:00.94:
+	Updating to B4J 2.5
+Fri 12/12/2014 11:39:41.85:
+	make sure to ask about Linux reordering of menu items
+Fri 12/12/2014 11:40:04.08:
+	acknowledge buggy menu/menuitem code
+Fri 12/12/2014 11:41:54.38:
+	note oddities about callbacks
+Fri 12/12/2014 11:42:09.60:
+	especially putting the name of the lib as the first par
+Fri 12/12/2014 11:42:50.38:
+	File/Open script works
+Fri 12/12/2014 11:42:57.65:
+	Help/About script works
+Fri 12/12/2014 11:47:09.17:
+	cancelling the file/open closes the app, which is definitely a no-no
+Fri 12/12/2014 11:48:19.45:
+	just looking in IDE: the cancel returns an empty string which is then used as a file spec to read.
+Fri 12/12/2014 11:49:25.91:
+	ok, fixed that issue.
+Fri 12/12/2014 11:50:35.08:
+	Edit/SelectAll works
+Fri 12/12/2014 11:51:00.76:
+	mention casing issues B4J v/v JavaScript

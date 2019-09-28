@@ -1,0 +1,1 @@
+MessageBox.Show(scriptPath, gsVersion);

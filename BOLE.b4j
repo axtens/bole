@@ -1,0 +1,151 @@
+﻿Version=3.61
+AppType=JavaFX
+NumberOfModules=0
+Build1=Java8,b4j.bole
+Build2=Java7,b4j.bole7,Java7
+NumberOfFiles=1
+File1=BOLE.fxml
+NumberOfLibraries=7
+Library1=jcore
+Library2=jfx
+Library3=javaobject
+Library4=jshell
+Library5=jmsgboxes
+Library6=jnashorn
+Library7=jrlini
+@EndOfDesignText@
+#Region  Project Attributes 
+	#MainFormWidth: 600
+	#MainFormHeight: 400 
+#End Region
+
+Sub Process_Globals
+	Private fx As JFX
+	Private MainForm As Form
+	Private mMainMenu As MenuBar
+	Private taMainText As TextArea
+	Private mb As Msgboxes
+	Private ini As jRLIni
+
+	Public gbDirty As Boolean = False
+	Public gsVersion As String = "BOLE v0.3"
+	Public gsPath As String
+	Public gsFile As String
+
+	Private tfStatus As TextField
+	Private tfCursor As TextField
+End Sub
+
+Sub AppStart (Form1 As Form, Args() As String)
+	MainForm = Form1
+	MainForm.RootPane.LoadLayout("BOLE") 'Load the layout file.
+	
+	ini.Initialize(File.DirApp,"BOLE.ini")
+	Dim menuRootFolder As String
+	menuRootFolder = ini.getKey("menuRootFolder","")
+	If menuRootFolder = "" Then
+		menuRootFolder = File.Combine(File.DirApp,"MENU")
+		ini.putKey("menuRootFolder", menuRootFolder)
+		ini.saveIni
+	End If
+
+	Dim menuFolderList As List
+	menuFolderList.Initialize()
+	menuFolderList = File.ListFiles(menuRootFolder)
+
+	Dim I As Int
+	Dim m As Menu
+	Dim S As String
+	Dim A() As String
+	For I = 0 To menuFolderList.Size-1
+		S = menuFolderList.Get(I)
+		A = Regex.Split("-", S)
+		m.Initialize(A(1),"menuHandler")
+		mMainMenu.Menus.Add(m)
+		If File.IsDirectory(menuRootFolder,S) Then
+			ProcessSubFolders(m, File.Combine(menuRootFolder,S))
+		End If
+	Next
+	MainForm.Show
+End Sub
+Sub ProcessSubFolders(m As Menu, path As String)
+	Dim menuFolderList As List
+	menuFolderList.Initialize()
+	menuFolderList = File.ListFiles(path)
+
+	Dim I As Int
+	Dim S As String
+	Dim A() As String
+	Dim B As String
+	For I = 0 To menuFolderList.Size-1
+		S = menuFolderList.Get(I)
+		If S.Contains("-") = True Then
+			A = Regex.Split("-", S)
+			If (A(1)).Contains(".") Then
+				B = Regex.Split("\.",A(1))(0)
+			Else
+				B = A(1)
+			End If
+			Dim mi As MenuItem
+			mi.Initialize(B,"menuHandler")
+			mi.Tag = File.Combine(path,menuFolderList.Get(I))
+			m.MenuItems.Add(mi)
+			If File.IsDirectory(path,S) Then
+				ProcessSubFolders(m,File.Combine(path,S))
+			End If
+		End If
+	Next
+	
+	Return 
+End Sub
+
+Sub menuHandler_Action
+    Dim mi As MenuItem = Sender
+	Dim script As String = mi.Tag 
+	
+	If File.IsDirectory(script,"") = False Then
+		If File.Exists(script,"") = True Then
+			Private oNas As jNashorn
+			Private oJFX As JFX
+			
+			oNas.enginePut("MessageBox",mb)
+			oNas.enginePut("MenuItem",mi)
+			oNas.enginePut("MainForm",MainForm)
+			oNas.enginePut("MainText",taMainText)
+			oNas.enginePut("JFX",oJFX)
+			oNas.enginePut("gbDirty",gbDirty)
+			oNas.enginePut("gsVersion",gsVersion)
+			oNas.enginePut("scriptPath",script)
+			oNas.enginePut("gsPath",gsPath)
+			oNas.enginePut("gsFile",gsFile)
+			oNas.enginePut("joMainForm",AsJavaObject(MainForm.RootPane))
+			oNas.enginePut("tfStatus",tfStatus)
+			oNas.enginePut("tfCursor",tfCursor)
+			oNas.enginePut("DirApp",File.DirApp)
+			oNas.enginePut("DirAssets",File.DirAssets)
+			oNas.enginePut("DirTemp",File.DirTemp)
+			Try
+				oNas.evalFile(script)
+				
+				If (Null <> oNas.engineGet("gsPath")) Then
+					gsPath = oNas.engineGet("gsPath")
+				End If
+				If (Null <> oNas.engineGet("gsFile")) Then
+					gsPath = oNas.engineGet("gsFile")
+				End If
+			Catch
+				mb.show(LastException.Message,gsVersion)
+			End Try
+			oNas = Null
+		End If
+	End If
+End Sub
+
+Sub taMainText_TextChanged (Old As String, New As String)
+	gbDirty = True
+End Sub
+
+Sub AsJavaObject(o As JavaObject) As JavaObject
+	Return o
+End Sub
+
