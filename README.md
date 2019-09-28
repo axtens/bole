@@ -47,4 +47,4 @@ Execute jar as
 	
 If anyone runs it in Mac OS X, please let me know how it performs (if it does at all.)
 
-The menus are strangely reordered under Linux.
+The menus are strangely reordered under Linux (or were when I wrote this back in 2014).
