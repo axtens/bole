@@ -1,18 +1,20 @@
-﻿Version=3.61
-AppType=JavaFX
-NumberOfModules=0
+﻿AppType=JavaFX
 Build1=Java8,b4j.bole
 Build2=Java7,b4j.bole7,Java7
-NumberOfFiles=1
 File1=BOLE.fxml
-NumberOfLibraries=7
+FileGroup1=Default Group
+Group=Default Group
 Library1=jcore
 Library2=jfx
 Library3=javaobject
 Library4=jshell
 Library5=jmsgboxes
 Library6=jnashorn
-Library7=jrlini
+Library7=db2000.b4j.extrafunctions
+NumberOfFiles=1
+NumberOfLibraries=7
+NumberOfModules=0
+Version=7.8
 @EndOfDesignText@
 #Region  Project Attributes 
 	#MainFormWidth: 600
@@ -25,10 +27,10 @@ Sub Process_Globals
 	Private mMainMenu As MenuBar
 	Private taMainText As TextArea
 	Private mb As Msgboxes
-	Private ini As jRLIni
+	Private ini As fINI
 
 	Public gbDirty As Boolean = False
-	Public gsVersion As String = "BOLE v0.3"
+	Public gsVersion As String = "BOLE v0.4"
 	Public gsPath As String
 	Public gsFile As String
 
@@ -40,13 +42,16 @@ Sub AppStart (Form1 As Form, Args() As String)
 	MainForm = Form1
 	MainForm.RootPane.LoadLayout("BOLE") 'Load the layout file.
 	
-	ini.Initialize(File.DirApp,"BOLE.ini")
+	ini.SetFileName(File.Combine(File.DirApp, "BOLE.INI"))
+	'ini.Initialize(File.DirApp,"BOLE.ini")
 	Dim menuRootFolder As String
-	menuRootFolder = ini.getKey("menuRootFolder","")
-	If menuRootFolder = "" Then
+	menuRootFolder = ini.rdString("Setup","MenuRootFolder") ' ini.getKey("menuRootFolder","")
+	If menuRootFolder = Null Then
 		menuRootFolder = File.Combine(File.DirApp,"MENU")
-		ini.putKey("menuRootFolder", menuRootFolder)
-		ini.saveIni
+		ini.wrString("Setup","MenuRootFolder", menuRootFolder,"Root of menu tree")
+		'ini.putKey("menuRootFolder", menuRootFolder)
+		'ini.saveIni
+		ini.UpDate
 	End If
 
 	Dim menuFolderList As List
